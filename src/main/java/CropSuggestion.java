@@ -36,25 +36,13 @@ public class CropSuggestion {
                 String soilType = req.queryParams("soilType");
                 float minPh = Float.parseFloat(req.queryParams("minPh"));
                 float maxPh = Float.parseFloat(req.queryParams("maxPh"));
-
-// Temperature parameters
                 float minTemperature = Float.parseFloat(req.queryParams("minTemperature"));
                 float maxTemperature = Float.parseFloat(req.queryParams("maxTemperature"));
-
-// Season parameter
                 String season = req.queryParams("season");
-
-// Moisture level parameters
                 float minMoistureLevel = Float.parseFloat(req.queryParams("minMoistureLevel"));
                 float maxMoistureLevel = Float.parseFloat(req.queryParams("maxMoistureLevel"));
-
-// Salinity level parameters
                 float minSalinityLevel = Float.parseFloat(req.queryParams("minSalinityLevel"));
                 float maxSalinityLevel = Float.parseFloat(req.queryParams("maxSalinityLevel"));
-
-
-
-
                 DecisionTree decisionTree = new DecisionTree(buildDecisionTree());
                 List<String> suggestedCrops = makeSuggestions(decisionTree, dbConnection, soilType, minPh, maxPh,
                         minTemperature, maxTemperature, season, minMoistureLevel, maxMoistureLevel, minSalinityLevel,
@@ -73,13 +61,13 @@ public class CropSuggestion {
 
                 jsonResponse.append("]}");
 
-                // Set the response as JSON
+
                 res.type("application/json");
                 return jsonResponse.toString();
 
 
 
-                // Return the suggestions as JSON
+
 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
