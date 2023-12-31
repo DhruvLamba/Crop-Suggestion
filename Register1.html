@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crop Suggestion System</title>
+
+  <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+      }
+
+      nav {
+        background-color: green;
+        padding: 10px;
+      }
+
+      nav a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 10px;
+        font-weight: bold;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      h1 {
+        color: #4caf50;
+        margin-bottom: 30px;
+      }
+
+      form {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        max-width: 300px;
+        width: 100%;
+        text-align: center;
+        transition: opacity 0.5s, transform 0.5s;
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        display: inline-block;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      .register-link {
+        cursor: pointer;
+        color: #4caf50;
+      }
+
+      #cropForm,
+      #loginForm {
+        display: none;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      #suggestedCrops {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      #googleSignInBtn {
+        background-color: #4285f4;
+        color: #fff;
+        padding: 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        display: inline-block;
+        margin-top: 10px;
+      }
+    </style>
+</head>
+<body>
+<nav>
+  <a href="#" onclick="showRegisterForm()">Register</a>
+  <a href="#" onclick="showLoginForm()">Login</a>
+</nav>
+
+<h1>Crop Suggestion System</h1>
+
+<!-- Registration Form - Displayed by default -->
+<form id="registerForm">
+  <label for="newUsername">New Username:</label>
+  <input type="text" id="newUsername" name="newUsername" required />
+
+  <label for="newPassword">New Password:</label>
+  <input type="password" id="newPassword" name="newPassword" required />
+
+  <button type="button" onclick="register()">Register</button>
+</form>
+
+<!-- Main Form - Hidden by default -->
+<form id="loginForm">
+  <label for="username">Username:</label>
+  <input type="text" id="username" name="username" required />
+
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required />
+
+  <button type="button" onclick="login()">Login</button>
+  <p onclick="showRegisterForm()" class="register-link">Register</p>
+</form>
+
+<!-- Suggestions Container -->
+<div id="suggestedCrops"></div>
+
+<script>
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        try {
+          const response = await fetch("/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Redirect to index.html after successful login
+            window.location.href = "index.html";
+          } else {
+            // Display detailed error message
+            alert(`Login failed: ${data.error || "An error occurred"}`);
+          }
+        } catch (error) {
+          console.error(error);
+          alert("An error occurred. Please try again.");
+        }
+      }
+
+      async function register() {
+        const newUsername = document.getElementById("newUsername").value;
+        const newPassword = document.getElementById("newPassword").value;
+
+        try {
+          const response = await fetch("/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ newUsername, newPassword }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert(data.message);
+            // Show the login form and hide the registration form
+            fadeOutAndHide("registerForm");
+            fadeIn("loginForm");
+          } else {
+            alert(data.error || "Registration failed");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("An error occurred. Please try again.");
+        }
+      }
+
+      function showLoginForm() {
+        // Show the login form and hide the registration form
+        fadeOutAndHide("registerForm");
+        fadeIn("loginForm");
+      }
+
+      function showRegisterForm() {
+        // Show the registration form and hide the login form
+        fadeOutAndHide("loginForm");
+        fadeIn("registerForm");
+      }
+
+      function fadeIn(elementId) {
+        const element = document.getElementById(elementId);
+        element.style.display = "block";
+        setTimeout(() => {
+          element.style.opacity = "1";
+          element.style.transform = "translateY(0)";
+        }, 50);
+      }
+
+      function fadeOutAndHide(elementId) {
+        const element = document.getElementById(elementId);
+        element.style.opacity = "0";
+        element.style.transform = "translateY(20px)";
+        setTimeout(() => {
+          element.style.display = "none";
+        }, 500);
+      }
+    </script>
+</body>
+</html>

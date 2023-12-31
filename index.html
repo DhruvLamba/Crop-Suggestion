@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crop Suggestion</title>
+    <!-- Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-size: cover;
+            background: url('/Crops.jpg');
+            background-size:100% 100%;
+        }
+
+        #navbar {
+            background-color: rgba(76, 175, 80, 0.8);
+            width: 100%;
+        }
+
+        #crop-form {
+            background-color: #90EE90;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #crop-form label,
+        #crop-form input,
+
+
+        #crop-form select {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #crop-form label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        #crop-form .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        #crop-form .col {
+            flex: 0 0 48%; /* Adjusted width for two columns */
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        h3 {
+            text-align: center;
+            color: #333;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav id="navbar" class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="#">CropSuggestion</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="Register1.html">Sign Out</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="crop-form">
+    <h2 style="padding-left:30%">Crop Suggestion</h2>
+
+    <form id="cropForm">
+        <div class="row">
+            <div class="col">
+                <label for="soilType">Soil Type:</label>
+                <input type="text" id="soilType" name="soilType" value="">
+            </div>
+            <div class="col">
+                <label for="season">Season:</label>
+                <select id="season" name="season">
+                    <option value="Kharif">Kharif</option>
+                    <option value="Rabi">Rabi</option>
+                    <option value="Zaid">Zaid</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label for="minPh">Minimum pH:</label>
+                <input type="number" id="minPh" name="minPh" value="">
+            </div>
+            <div class="col">
+                <label for="maxPh">Maximum pH:</label>
+                <input type="number" id="maxPh" name="maxPh" value="">
+            </div>
+
+
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label for="minTemperature">Minimum Temperature:</label>
+                <input type="number" id="minTemperature" name="minTemperature" value="">
+            </div>
+            <div class="col">
+
+                <label for="maxTemperature">Maximum Temperature:</label>
+                <input type="number" id="maxTemperature" name="maxTemperature" value="">
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label for="minMoistureLevel">Minimum Moisture Level:</label>
+                <input type="number" id="minMoistureLevel" name="minMoistureLevel" value="">
+            </div>
+            <div class="col">
+                <label for="maxMoistureLevel">Maximum Moisture Level:</label>
+                <input type="number" id="maxMoistureLevel" name="maxMoistureLevel" value="">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label for="minSalinityLevel">Minimum Salinity Level:</label>
+                <input type="number" id="minSalinityLevel" name="minSalinityLevel" value="">
+            </div>
+            <div class="col">
+                <label for="maxSalinityLevel">Maximum Salinity Level:</label>
+                <input type="number" id="maxSalinityLevel" name="maxSalinityLevel" value="">
+            </div>
+        </div>
+
+        <!-- Use a button to trigger the AJAX request -->
+        <button type="button" onclick="getSuggestedCrops()">Get Suggested Crops</button>
+
+        <!-- Display area for suggested crops -->
+        <div id="suggestedCrops"></div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Additional initialization code if needed
+
+        // Attach the getSuggestedCrops function to the button click event
+        document.getElementById("getCropsButton").addEventListener("click", getSuggestedCrops);
+
+        clearForm()
+    });
+
+    function getSuggestedCrops() {
+        // Prepare parameters from form inputs
+        var soilType = document.getElementById("soilType").value;
+        var minPh = document.getElementById("minPh").value;
+        var maxPh = document.getElementById("maxPh").value;
+        var minTemperature = document.getElementById("minTemperature").value;
+        var maxTemperature = document.getElementById("maxTemperature").value;
+        var season = document.getElementById("season").value;
+        var minMoistureLevel = document.getElementById("minMoistureLevel").value;
+        var maxMoistureLevel = document.getElementById("maxMoistureLevel").value;
+        var minSalinityLevel = document.getElementById("minSalinityLevel").value;
+        var maxSalinityLevel = document.getElementById("maxSalinityLevel").value;
+
+        // Create a new XMLHttpRequest object
+        var xhr = new XMLHttpRequest();
+
+        // Configure it: GET-method for the URL /suggestCrops
+        xhr.open('POST', 'http://localhost:4567/suggestCrops', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        // Set up a callback function to handle the response
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // Parse the JSON response
+                    var response = JSON.parse(xhr.responseText);
+
+                    // Call the function to display suggested crops
+                    displaySuggestedCrops(response.suggestedCrops);
+
+                } else {
+                    console.error('Error:', xhr.status, xhr.statusText);
+                }
+            }
+        };
+
+        // Prepare the data to send as parameters in the request
+        var params = 'soilType=' + encodeURIComponent(soilType) +
+            '&minPh=' + encodeURIComponent(minPh) +
+            '&maxPh=' + encodeURIComponent(maxPh) +
+            '&minTemperature=' + encodeURIComponent(minTemperature) +
+            '&maxTemperature=' + encodeURIComponent(maxTemperature) +
+            '&season=' + encodeURIComponent(season) +
+            '&minMoistureLevel=' + encodeURIComponent(minMoistureLevel) +
+            '&maxMoistureLevel=' + encodeURIComponent(maxMoistureLevel) +
+            '&minSalinityLevel=' + encodeURIComponent(minSalinityLevel) +
+            '&maxSalinityLevel=' + encodeURIComponent(maxSalinityLevel);
+
+        // Send the request with parameters
+        xhr.send(params);
+    }
+
+    function displaySuggestedCrops(suggestedCrops) {
+        // Get the div element for suggested crops
+        var suggestedCropsDiv = document.getElementById("suggestedCrops");
+
+        if (suggestedCropsDiv) {
+            // Display the suggested crops or a message if none are found
+            if (suggestedCrops.length > 0) {
+                suggestedCropsDiv.textContent = suggestedCrops.join(', ');
+            } else {
+                suggestedCropsDiv.textContent = 'No crops found for the given criteria.';
+            }
+        } else {
+            console.error("Element with id 'suggestedCrops' not found.");
+        }
+    }
+
+    function clearForm() {
+        // Clear the values of all form inputs
+        var formInputs = document.querySelectorAll("#cropForm input, #cropForm select");
+        formInputs.forEach(function (input) {
+            input.value = "";
+        });
+
+        // Optionally, you can set default values for specific inputs
+        document.getElementById("soilType").value = value;
+        document.getElementById("minPh").value = value;
+        document.getElementById("maxPh").value = value;
+        document.getElementById("minTemperature").value = value;
+        document.getElementById("maxTemperature").value = value;
+        document.getElementById("season").value = value;
+        document.getElementById("minMoistureLevel").value = value;
+        document.getElementById("maxMoistureLevel").value = value;
+        document.getElementById("minSalinityLevel").value = value;
+        document.getElementById("maxSalinityLevel").value = value;
+    }
+</script>
+
+</body>
+</html>
